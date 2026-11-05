@@ -2,6 +2,8 @@
 
 讓網站的「一鍵生圖」改用你在 Colab 上架設的 Qwen-Image 2.1 Gradio WebUI（`https://qwen.seeghost.win`），使用 **Qwen-Image 2.1 Turbo** 權重（8 步出圖）。
 
+完整的 WebUI 規格、架構決定與待辦事項，見 [`docs/qwen-webui-spec.md`](qwen-webui-spec.md)。
+
 ## 架構
 
 ```
