@@ -2,6 +2,7 @@ import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { normalizePortraits } from './portrait-data.mjs';
 import { loadCustomReferences } from './custom-data.mjs';
+import { toTaiwan } from './zh-tw.mjs';
 
 export const root = new URL('../', import.meta.url);
 export const readJson = async (path) => JSON.parse(await readFile(new URL(path, root), 'utf8'));
@@ -152,7 +153,7 @@ export async function normalize(pose, costume, chinese, portraits = [], animeCos
   const poses = [...groups.values()].sort((a, b) => Number(a.extended) - Number(b.extended));
   const characters = await normalizePortraits(portraits);
   const custom = await loadCustomReferences([...poses, ...outfits, ...characters]);
-  const items = [...custom, ...poses, ...outfits, ...characters];
+  const items = localizeItems([...custom, ...poses, ...outfits, ...characters]);
   return {
     items,
     stats: {
@@ -168,7 +169,51 @@ export async function normalize(pose, costume, chinese, portraits = [], animeCos
   };
 }
 
+/** Source texts are Simplified Chinese; the site shows Taiwan Traditional Chinese. */
+function localize(value) {
+  if (Array.isArray(value)) return value.map(localize);
+  if (!value || typeof value !== 'object') return value;
+  return Object.fromEntries(
+    Object.entries(value).map(([key, field]) => [
+      key,
+      key === 'zh' && typeof field === 'string' ? toTaiwan(field) : localize(field),
+    ]),
+  );
+}
+
+/** Keep the original Simplified wording searchable alongside the Taiwan text. */
+export function localizeItems(items) {
+  return items.map((item) => {
+    const simplified = [
+      item.title?.zh,
+      item.keywords?.zh,
+      item.category?.zh,
+      item.series?.zh,
+      item.country?.zh,
+      ...(item.tags || []).map((tag) => tag.zh),
+    ].filter(Boolean);
+    const localized = localize(item);
+    const searchable = new Set(localized.keywords.zh.split(/\s+/));
+    const extra = [...new Set(simplified.flatMap((text) => text.split(/\s+/)))].filter(
+      (word) => word && toTaiwan(word) !== word && !searchable.has(word),
+    );
+    if (extra.length) localized.keywords.zh = `${localized.keywords.zh} ${extra.join(' ')}`;
+    return localized;
+  });
+}
+
+/** Taiwan forms of the costume vocabulary, used to split unspaced search queries. */
+export async function saveSearchTerms() {
+  const vocabulary = await readJson('data/vocabulary.json');
+  const terms = [...new Set(Object.values(vocabulary.costume).map(toTaiwan))].sort();
+  await writeFile(
+    new URL('data/search-terms.zh-tw.json', root),
+    `${JSON.stringify(terms, null, 2)}\n`,
+  );
+}
+
 export async function saveCatalog(catalog) {
+  await saveSearchTerms();
   await mkdir(new URL('public/data/', root), { recursive: true });
   await writeFile(new URL('public/data/catalog.json', root), JSON.stringify(catalog));
   console.log(JSON.stringify(catalog.stats, null, 2));

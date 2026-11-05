@@ -4,7 +4,7 @@ import { readFile } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import { unzipSync } from 'fflate';
 import { createServer } from 'vite';
-import { readJson } from '../scripts/build-data.mjs';
+import { readJson, localizeItems } from '../scripts/build-data.mjs';
 import { loadCustomReferences } from '../scripts/custom-data.mjs';
 
 const catalog = await readJson('public/data/catalog.json');
@@ -26,7 +26,7 @@ after(() => vite.close());
 
 test('custom manifests merge independently, with original hashes and separate cover files', async () => {
   assert.deepEqual(
-    await loadCustomReferences(catalog.items.filter((item) => !item.collection)),
+    localizeItems(await loadCustomReferences(catalog.items.filter((item) => !item.collection))),
     custom,
   );
   await assert.rejects(loadCustomReferences(custom), /duplicate custom ID/);
@@ -76,7 +76,7 @@ test('custom manifests merge independently, with original hashes and separate co
 });
 
 test('custom and anime filters intersect with categories and bilingual search', () => {
-  for (const query of ['动漫', 'Anime', '自建扩展', 'custom'])
+  for (const query of ['动漫', '動漫', 'Anime', '自建扩展', '自建擴充', 'custom'])
     assert.ok(matchesQuery(animeOutfit, query));
   const anime = catalog.items.filter((item) => matchesExtension(item, 'custom', 'anime'));
   assert.equal(anime.length, 30);
@@ -227,7 +227,7 @@ test('custom depth keeps project-base URLs, generation uploads and history seman
   };
   assert.ok(reference.variant.original.endsWith('_depth.png'));
   assert.ok(isDepthVariant(structuredClone(reference.variant)));
-  assert.match(generation.referencePrompt([reference], 'zh'), /越亮越靠近镜头/);
+  assert.match(generation.referencePrompt([reference], 'zh'), /越亮越靠近鏡頭/);
   assert.match(generation.referencePrompt([reference], 'en'), /brighter areas are closer/);
   const bytes = await readFile(
     new URL(`../public/${new URL(reference.variant.original).pathname.slice(1)}`, import.meta.url),

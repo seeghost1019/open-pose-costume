@@ -171,13 +171,13 @@ test('visible codes are searchable and one tag ID has one bilingual display name
   assert.ok(matchesQuery(pose, 'MP-012'));
   assert.equal(filterReferences(items, { query: 'MP-012' }).length, 1);
   assert.equal(referenceTagLabel('photo', 'en', 'Photorealistic'), 'Photographic');
-  assert.equal(referenceTagLabel('photo', 'zh'), '写实');
+  assert.equal(referenceTagLabel('photo', 'zh'), '寫實');
 });
 
 // Model/dance are subject/use tags; they must not migrate into visual style.
 test('model and dance links retain independent subject tags and intersect with line-art', () => {
   for (const { tag, poseCount, costumeCount, queries } of [
-    { tag: 'model', poseCount: 11, costumeCount: 1, queries: ['模特', 'Model'] },
+    { tag: 'model', poseCount: 11, costumeCount: 1, queries: ['模特', '模特兒', 'Model'] },
     { tag: 'dance', poseCount: 10, costumeCount: 1, queries: ['舞蹈', 'Dance'] },
   ]) {
     assert.deepEqual(readTagFilters(new URLSearchParams(`tag=${tag}&style=line-art`)), {
@@ -201,6 +201,6 @@ test('model and dance links retain independent subject tags and intersect with l
       costumeCount,
     );
   }
-  assert.equal(referenceTagLabel('model', 'zh'), '模特');
+  assert.equal(referenceTagLabel('model', 'zh'), '模特兒');
   assert.equal(referenceTagLabel('dance', 'en'), 'Dance');
 });
