@@ -8,6 +8,8 @@
 
 供之後維護，或在新的對話中接續使用。
 
+> 本文以 `webui.example.com`（WebUI）和 `api.example.com`（轉接器）代表你的網域，`example.com` 代表你在 Cloudflare 管理的網域；實際操作時請換成你自己的。
+>
 > **規格來源**：使用者 WebUI 筆記本的 cell 6、12、16 與 `qwen_mcp/core.py`，由使用者整理提供。**尚未對實際的 WebUI 連線驗證**。
 > 串接程式只在本機用「依此規格模擬的 Gradio app」（Gradio 6.31、gradio_client 2.7.2）測試過，詳見[驗證紀錄](#驗證紀錄)。
 
@@ -17,7 +19,7 @@
 
 | 項目 | 內容 |
 |---|---|
-| 對外網址 | `https://qwen.seeghost.win` |
+| 對外網址 | `https://webui.example.com` |
 | 對外方式 | Cloudflare Tunnel，轉到 `127.0.0.1:7860`（只聽本機） |
 | 協定 | Gradio（`gradio_client`），**不是**自訂 JSON REST API |
 | 認證 | Gradio 帳密 `auth=(WEBUI_USER, WEBUI_PASS)`，不使用 Cloudflare Access |
@@ -60,7 +62,7 @@ files, prompt, steps, seed, lora_on, lora_scale, output_resolution, size, width,
 ```python
 from gradio_client import Client, handle_file
 
-c = Client("https://qwen.seeghost.win", auth=(user, password))
+c = Client("https://webui.example.com", auth=(user, password))
 
 # 文生圖
 img, file, info = c.predict("一隻貓", "16:9", 2048, 2048, 40, -1,
@@ -117,11 +119,11 @@ img, file, info = c.predict(files, "穿上服裝", 40, -1, False, 1.0,
 ## 5. 網站串接方式
 
 ```
-網站（pose.seeghost.win）
-   │  POST https://api.seeghost.win/v1/images/edits
+網站（seeghost1019.github.io/open-pose-costume）
+   │  POST https://api.example.com/v1/images/edits
    │  Authorization: Bearer <OPC_API_KEY>
    ▼
-Cloudflare Tunnel（與 qwen.seeghost.win 同一條，多一個公開主機名稱）
+Cloudflare Tunnel（與 webui.example.com 同一條，多一個公開主機名稱）
    ▼
 轉接器 127.0.0.1:8000（colab/opc_image_adapter.py，在同一個 Colab 執行）
    │  gradio_client，帳密 WEBUI_USER / WEBUI_PASS
@@ -155,18 +157,17 @@ Gradio WebUI 127.0.0.1:7860 → /multi
 | Turbo 固定傳 `steps=10` | WebUI 的 `steps` 最小值是 10，傳 8 會被拒絕（已實測）。Turbo 權重自帶 8 步排程，只設定 `num_inference_steps` 不會改變它。**待實際確認**：進度條應顯示 8/8。 |
 | 每 10 秒送一個空白字元保持連線 | Cloudflare 會切斷 100 秒內沒有回應的連線（524）。JSON 允許開頭有空白；網站會把帶有 `error` 欄位的回應當成失敗。 |
 | 網站生圖等待上限改成 10 分鐘 | 原本只有 3 分鐘，但錯誤訊息寫「10 分鐘」；WebUI 也需要排隊時間。 |
-| CORS 只允許本站網址 | 允許 `pose.seeghost.win`、`seeghost1019.github.io`、`localhost:5199`、`127.0.0.1:5199`。 |
+| CORS 只允許本站網址 | 允許 `seeghost1019.github.io`、`localhost:5199`、`127.0.0.1:5199`。 |
 
 ---
 
 ## 6. 網域與主機
 
-| 網址 | 用途 | Cloudflare DNS 設定 |
+| 網址 | 用途 | 設定 |
 |---|---|---|
-| `pose.seeghost.win` | 網站（GitHub Pages 自訂網域） | `CNAME` → `seeghost1019.github.io`，**灰色雲朵（DNS only）** |
-| `qwen.seeghost.win` | Gradio WebUI | Tunnel → `127.0.0.1:7860`（橘色雲朵） |
-| `api.seeghost.win` | 網站用的生圖轉接器 | 同一條 Tunnel → `127.0.0.1:8000`（橘色雲朵） |
-| `seeghost1019.github.io/open-pose-costume/` | 舊網址 | 設定自訂網域後，會自動轉到 `pose.seeghost.win` |
+| `seeghost1019.github.io/open-pose-costume/` | 網站（GitHub Pages，不使用自訂網域） | — |
+| `webui.example.com` | Gradio WebUI | Cloudflare Tunnel → `127.0.0.1:7860` |
+| `api.example.com` | 網站用的生圖轉接器 | 同一條 Tunnel → `127.0.0.1:8000` |
 
 ---
 
@@ -175,7 +176,8 @@ Gradio WebUI 127.0.0.1:7860 → /multi
 | 項目 | PR |
 |---|---|
 | 網站用語改成台灣繁體中文：OpenCC `twp` 加上修正表 `scripts/zh-tw.mjs`；素材目錄在建置時轉換；搜尋支援繁、簡體 | [#1](https://github.com/seeghost1019/open-pose-costume/pull/1) |
-| 自訂網域：CI 用 `actions/configure-pages` 自動判斷網址路徑；`index.html` 的分享網址改成 `pose.seeghost.win`；新增 `docs/custom-domain-guide.md` | [#2](https://github.com/seeghost1019/open-pose-costume/pull/2) |
+| CI 用 `actions/configure-pages` 依 Pages 設定自動判斷網址路徑 | [#2](https://github.com/seeghost1019/open-pose-costume/pull/2) |
+| 不使用自訂網域，網址改回 GitHub Pages | [#4](https://github.com/seeghost1019/open-pose-costume/pull/4) |
 | 生圖改接 WebUI：轉接器、教學、等待上限改為 10 分鐘 | [#3](https://github.com/seeghost1019/open-pose-costume/pull/3) |
 
 ---
@@ -202,7 +204,6 @@ Gradio WebUI 127.0.0.1:7860 → /multi
 - [ ] 生影片：WebUI 目前沒有影片端點。之後要提供影片 API 規格；網站需新增影片介面與非同步任務流程。
 - [ ] 更換分享預覽圖 `public/social/omilic-x-card.png`：目前是原作者的簡體版，上面印著 omilic.com。
 - [ ] `index.html` 的 `twitter:site` 還是原作者的 `@HongyeMain`。
-- [ ] （選用）在 GitHub 驗證 `seeghost.win` 網域所有權，見 `docs/custom-domain-guide.md` 的加分步驟。
 
 ---
 

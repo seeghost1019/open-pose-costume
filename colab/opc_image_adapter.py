@@ -64,7 +64,6 @@ class Settings:
     api_key: str
     allowed_origins: list[str] = field(
         default_factory=lambda: [
-            "https://pose.seeghost.win",
             "https://seeghost1019.github.io",
             "http://localhost:5199",
             "http://127.0.0.1:5199",
