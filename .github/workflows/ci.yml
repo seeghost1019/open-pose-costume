@@ -30,8 +30,8 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm test
-      # Builds for the site root on a custom domain (e.g. pose.seeghost.win) and for
-      # /<repository>/ on <owner>.github.io, following the repository's Pages settings.
+      # Builds for /<repository>/ on <owner>.github.io, or for the site root when a custom
+      # domain is set, following the repository's Pages settings.
       - uses: actions/configure-pages@v5
         id: pages
       - run: npm run build -- --base "${{ steps.pages.outputs.base_path }}/"
