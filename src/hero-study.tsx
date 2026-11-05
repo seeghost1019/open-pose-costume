@@ -5,14 +5,14 @@ import type { Lang } from './types';
 
 const labels = {
   zh: {
-    title: '三种参考，一个角色',
-    pose: '姿势',
-    costume: '服饰',
+    title: '三種參考，一個角色',
+    pose: '姿勢',
+    costume: '服飾',
     character: '人物',
-    result: '生成结果',
-    example: '生成示例',
-    open: '放大查看',
-    close: '关闭',
+    result: '生成結果',
+    example: '生成範例',
+    open: '放大檢視',
+    close: '關閉',
   },
   en: {
     title: 'Three references. One character.',

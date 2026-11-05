@@ -116,6 +116,8 @@ test('search works in both languages, accepts joined Chinese clothing terms and 
     'blue coat',
     '蓝色 大衣',
     '蓝色大衣',
+    '藍色 大衣',
+    '藍色大衣',
     'BLUE COAT',
     coat.id.toLowerCase(),
     'blue 大衣',
@@ -132,6 +134,12 @@ test('search works in both languages, accepts joined Chinese clothing terms and 
     matchesQuery(
       catalog.items.find((item) => item.id === 'full_single_P045'),
       '侧坐',
+    ),
+  );
+  assert.ok(
+    matchesQuery(
+      catalog.items.find((item) => item.id === 'full_single_P045'),
+      '側坐',
     ),
   );
   assert.ok(matchesQuery(coat, ''));
@@ -231,4 +239,22 @@ test('depth mode preserves catalog identity and angles without mutating original
     }
   }
   assert.equal(JSON.stringify(catalog), snapshot);
+});
+
+test('catalog Chinese text uses Taiwan Traditional wording', async () => {
+  const { toTaiwan } = await import('../scripts/zh-tw.mjs');
+  for (const [simplified, taiwan] of [
+    ['迷你连衣裙', '迷你洋裝'],
+    ['蕾丝吊带衫', '蕾絲細肩帶上衣'],
+    ['空气刘海', '空氣瀏海'],
+    ['酒红色轻透层次发', '酒紅色輕透層次髮'],
+    ['显示扩展分类', '顯示擴充分類'],
+    ['酒红蕾丝吊带袜套装', '酒紅蕾絲吊帶襪套裝'],
+  ])
+    assert.equal(toTaiwan(simplified), taiwan);
+  for (const text of ['攝影棚質感', '模特兒', '不加入文字或浮水印'])
+    assert.equal(toTaiwan(text), text);
+  const item = catalog.items.find((entry) => entry.id === 'full_single_P045');
+  assert.equal(toTaiwan(item.title.zh), item.title.zh);
+  assert.equal(toTaiwan(item.category.zh), item.category.zh);
 });

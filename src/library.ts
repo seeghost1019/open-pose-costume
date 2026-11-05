@@ -1,5 +1,6 @@
 import type { Lang, Reference } from './types';
 import vocabulary from '../data/vocabulary.json';
+import taiwanTerms from '../data/search-terms.zh-tw.json';
 
 export type View = 'all' | 'pose' | 'costume' | 'character' | 'saved' | 'studio';
 export type Sort = 'curated' | 'name' | 'code';
@@ -11,11 +12,11 @@ export function isSubjectTag(id: string) {
 const tagVocabulary: Record<string, { zh: string; en: string }> = {
   female: { zh: '女性', en: 'Female' },
   male: { zh: '男性', en: 'Male' },
-  model: { zh: '模特', en: 'Model' },
+  model: { zh: '模特兒', en: 'Model' },
   dance: { zh: '舞蹈', en: 'Dance' },
-  photo: { zh: '写实', en: 'Photographic' },
-  anime: { zh: '动漫', en: 'Anime' },
-  'line-art': { zh: '结构线稿', en: 'Structural line art' },
+  photo: { zh: '寫實', en: 'Photographic' },
+  anime: { zh: '動漫', en: 'Anime' },
+  'line-art': { zh: '結構線稿', en: 'Structural line art' },
 };
 export function referenceTagLabel(id: string, lang: Lang, fallback?: string) {
   return tagVocabulary[id]?.[lang] || fallback || id;
@@ -62,7 +63,8 @@ export function filterReferences(items: Reference[], filters: LibraryFilters): R
       matchesQuery(item, query),
   );
 }
-const chineseTerms = [...new Set(Object.values(vocabulary.costume))].sort(
+// Split unspaced queries written in either Simplified or Taiwan Traditional Chinese.
+const chineseTerms = [...new Set([...Object.values(vocabulary.costume), ...taiwanTerms])].sort(
   (a, b) => b.length - a.length,
 );
 
@@ -99,7 +101,7 @@ export function matchesQuery(item: Reference, query: string): boolean {
     item.series.zh,
     item.series.en,
     ...(item.country ? [item.country.id, item.country.zh, item.country.en] : []),
-    ...(item.collection === 'custom' ? ['自建扩展', 'Custom'] : []),
+    ...(item.collection === 'custom' ? ['自建擴充', '自建扩展', 'Custom'] : []),
     ...(item.tags || []).flatMap((tag) => [tag.id, tag.zh, tag.en]),
   ]
     .join(' ')
@@ -122,7 +124,7 @@ export function sortItems(items: Reference[], sort: Sort, lang: Lang): Reference
       sort === 'code'
         ? a.code.localeCompare(b.code, undefined, { numeric: true }) ||
           a.id.localeCompare(b.id, undefined, { numeric: true })
-        : a.title[lang].localeCompare(b.title[lang], lang === 'zh' ? 'zh-CN' : 'en'),
+        : a.title[lang].localeCompare(b.title[lang], lang === 'zh' ? 'zh-TW' : 'en'),
     );
   const poses = items.filter((item) => item.kind === 'pose');
   const costumes = items.filter((item) => item.kind === 'costume');

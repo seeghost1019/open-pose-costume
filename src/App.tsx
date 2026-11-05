@@ -186,10 +186,10 @@ export default function App() {
     return () => controller.abort();
   }, [reload]);
   useEffect(() => {
-    document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
+    document.documentElement.lang = lang === 'zh' ? 'zh-TW' : 'en';
     document.title =
       lang === 'zh'
-        ? 'Open Pose & Costume · 姿势与服装参考库'
+        ? 'Open Pose & Costume · 姿勢與服裝參考庫'
         : 'Open Pose & Costume · Reference studio';
     storageSet('opc-language', lang);
   }, [lang]);
@@ -333,7 +333,7 @@ export default function App() {
       setHair('all');
   }
   const activeFilters = [
-    ...(query ? [{ key: 'q', label: `“${query}”`, clear: () => setQuery('') }] : []),
+    ...(query ? [{ key: 'q', label: `「${query}」`, clear: () => setQuery('') }] : []),
     ...(kind !== 'all'
       ? [
           {
@@ -698,13 +698,13 @@ export default function App() {
         file,
         title:
           kind === 'character'
-            ? { zh: '人物参考', en: 'Character reference' }
-            : { zh: '服饰参考', en: 'Outfit reference' },
+            ? { zh: '人物參考', en: 'Character reference' }
+            : { zh: '服飾參考', en: 'Outfit reference' },
         keywords: {
           zh:
             kind === 'character'
-              ? '保留所附人物的五官、脸型、发型发色、肤色、体型比例与画风'
-              : '采用所附服饰图片中的穿搭、配色、版型和材质，不采用服装模特的身份和姿势',
+              ? '保留所附人物的五官、臉型、髮型髮色、膚色、體型比例與畫風'
+              : '採用所附服飾圖片中的穿搭、配色、版型和材質，不採用服裝模特兒的身份和姿勢',
           en:
             kind === 'character'
               ? 'Preserve the attached character’s face, hairstyle, hair color, skin tone, proportions and visual style'
@@ -714,7 +714,7 @@ export default function App() {
           id: `${kind}-upload`,
           angle: 'front',
           label:
-            kind === 'character' ? { zh: '人物', en: 'Character' } : { zh: '服饰', en: 'Costume' },
+            kind === 'character' ? { zh: '人物', en: 'Character' } : { zh: '服飾', en: 'Costume' },
           thumbnail: preview,
           image: preview,
           original: preview,
@@ -1818,22 +1818,22 @@ export default function App() {
         </Modal>
       )}
       {showDomainNotice && (
-        <Modal onClose={dismissDomainNotice} label={lang === 'zh' ? '新域名已启用' : 'Visit our new domain'} className="about-modal">
+        <Modal onClose={dismissDomainNotice} label={lang === 'zh' ? '新網域已啟用' : 'Visit our new domain'} className="about-modal">
           <div className="panel-heading">
-            <h2>{lang === 'zh' ? '新域名已启用' : 'Visit our new domain'}</h2>
+            <h2>{lang === 'zh' ? '新網域已啟用' : 'Visit our new domain'}</h2>
             <button className="icon-button" aria-label={t.close} onClick={dismissDomainNotice}><X size={22} /></button>
           </div>
           <p>{lang === 'zh'
-            ? '为了提供更稳定的网络访问服务，我们已启用新域名 omilic.com，建议前往新站继续使用。'
+            ? '為了提供更穩定的連線服務，我們已啟用新網域 omilic.com，建議前往新站繼續使用。'
             : 'For more reliable access, we have launched our new domain, omilic.com. We recommend continuing on the new site.'}</p>
-          <p>{lang === 'zh' ? '收藏和 API 配置保存在当前浏览器的本站数据中，切换域名后需要重新设置。' : 'Favorites and API settings are stored for this domain and will need to be set up again on the new site.'}</p>
+          <p>{lang === 'zh' ? '收藏和 API 設定儲存在目前瀏覽器的本站資料中，切換網域後需要重新設定。' : 'Favorites and API settings are stored for this domain and will need to be set up again on the new site.'}</p>
           <label className="domain-notice-opt-out">
             <input type="checkbox" checked={domainNoticeOptOut} onChange={(event) => setDomainNoticeOptOut(event.target.checked)} />
             <span>{lang === 'zh' ? '不再提醒' : 'Do not remind me again'}</span>
           </label>
           <div className="domain-notice-actions">
             <a className="primary-button" href={newDomainUrl} onClick={dismissDomainNotice}>{lang === 'zh' ? '前往新站' : 'Visit new site'}<ExternalLink size={16} /></a>
-            <button className="text-action" onClick={dismissDomainNotice}>{lang === 'zh' ? '暂时留在这里' : 'Stay here for now'}</button>
+            <button className="text-action" onClick={dismissDomainNotice}>{lang === 'zh' ? '暫時留在這裡' : 'Stay here for now'}</button>
           </div>
         </Modal>
       )}

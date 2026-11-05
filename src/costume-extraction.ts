@@ -16,12 +16,12 @@ export async function extractCostume(
   const reference: UploadedImageReference = {
     kind: 'costume',
     file,
-    title: { zh: '上传的服饰', en: 'Uploaded outfit' },
+    title: { zh: '上傳的服飾', en: 'Uploaded outfit' },
     keywords: { zh: '', en: '' },
     variant: {
       id: 'costume-upload',
       angle: 'front',
-      label: { zh: '服饰', en: 'Outfit' },
+      label: { zh: '服飾', en: 'Outfit' },
       thumbnail: '',
       image: '',
       original: '',

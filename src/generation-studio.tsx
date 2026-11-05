@@ -165,7 +165,7 @@ function ReferencePicker({
           <CategoryFilter items={available} filters={filters} lang={lang} onChange={setCategory} />
         </ReferenceFilters>
         <p className="studio-picker-count" role="status">
-          {filtered.length.toLocaleString(lang === 'zh' ? 'zh-CN' : 'en')} {t.referenceCount}
+          {filtered.length.toLocaleString(lang === 'zh' ? 'zh-TW' : 'en')} {t.referenceCount}
         </p>
       </header>
       <div className="studio-picker-scroll" ref={scrollRef}>
@@ -261,7 +261,7 @@ function HistoryThumbnail({
       <button onClick={onRestore} aria-label={studioCopy[lang].restore}>
         {source && <img src={source} alt={generationCopy[lang].generated} />}
         <span>
-          {new Date(record.createdAt).toLocaleString(lang === 'zh' ? 'zh-CN' : 'en', {
+          {new Date(record.createdAt).toLocaleString(lang === 'zh' ? 'zh-TW' : 'en', {
             month: 'short',
             day: 'numeric',
             hour: '2-digit',

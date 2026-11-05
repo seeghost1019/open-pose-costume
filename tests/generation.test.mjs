@@ -235,8 +235,8 @@ test('character prompts describe actual role order in both languages without cha
   assert.match(en, /Reference 2 \(pose\)/);
   assert.match(en, /Reference 3 \(character\)/);
   const zh = api.referencePrompt(refs, 'zh');
-  assert.match(zh, /参考图 1（服装）/);
-  assert.match(zh, /参考图 3（人物）/);
+  assert.match(zh, /參考圖 1（服裝）/);
+  assert.match(zh, /參考圖 3（人物）/);
   assert.match(zh, /保留其五官/);
   const original = api.referencePrompt(references, 'en');
   assert.match(original, /^Create a finished character illustration/);
@@ -259,9 +259,9 @@ test('catalog search metadata cannot request a multi-view sheet or override the 
         assert.ok(!prompt.includes(ref.title[lang]));
         assert.ok(!prompt.includes(ref.keywords[lang]));
       }
-      assert.doesNotMatch(prompt, /五视角|five views/i);
-      assert.match(prompt, lang === 'zh' ? /一个人物、一个选定视角/ : /one person and one selected viewpoint/);
-      assert.match(prompt, lang === 'zh' ? /手势、腿部弯曲及遮挡关系/ : /hand gestures, bent legs and occlusion/);
+      assert.doesNotMatch(prompt, /五视角|五視角|five views/i);
+      assert.match(prompt, lang === 'zh' ? /一個人物、一個選定視角/ : /one person and one selected viewpoint/);
+      assert.match(prompt, lang === 'zh' ? /手勢、腿部彎曲及遮擋關係/ : /hand gestures, bent legs and occlusion/);
       assert.match(prompt, lang === 'zh' ? /禁止多面板/ : /No panels/);
     }
   }
@@ -373,7 +373,7 @@ test('depth pose uploads the selected depth original and explains depth without 
     },
   };
   const refs = [pose, references[1]];
-  assert.match(api.referencePrompt(refs, 'zh'), /此图为深度图/);
+  assert.match(api.referencePrompt(refs, 'zh'), /此圖為深度圖/);
   assert.match(api.referencePrompt(refs, 'en'), /This is a depth map/);
   const calls = [];
   await api.generateReferenceImage(
