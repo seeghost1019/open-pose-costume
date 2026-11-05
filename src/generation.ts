@@ -241,7 +241,8 @@ export async function generateReferenceImage(
   if (!references.length || !prompt.trim()) throw new ImageGenerationError('missingReference');
   const jobApiUrl = import.meta.env.VITE_IMAGE_JOB_API_URL || '';
   const timeout = new AbortController();
-  const timer = setTimeout(() => timeout.abort(), jobApiUrl.trim() ? 600_000 : 180_000);
+  // Self-hosted services (e.g. a queued Colab WebUI) can take minutes; match the 10-minute message.
+  const timer = setTimeout(() => timeout.abort(), 600_000);
   const combined = AbortSignal.any([signal, timeout.signal]);
   try {
     const urls = references.map((reference) => {
